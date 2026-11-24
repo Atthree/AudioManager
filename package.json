@@ -1,0 +1,14 @@
+{
+  "name": "com.atthree.audio-manager",
+  "version": "0.1.0",
+  "displayName": "Audio Manager",
+  "description": "Audio manager for Unity 6: sound assets with variations, pooled sources with voice limiting, 2D/3D one-liners, music crossfades, volume channels that persist, pause handling, play-on-event components.",
+  "unity": "6000.0",
+  "author": {
+    "name": "Atthree",
+    "url": "https://github.com/Atthree"
+  },
+  "license": "MIT",
+  "keywords": [],
+  "dependencies": {}
+}
