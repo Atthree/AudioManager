@@ -10,11 +10,22 @@
   },
   "license": "MIT",
   "keywords": [
+    "unity",
+    "unity3d",
+    "unity6",
+    "upm",
+    "upm-package",
+    "unity-package",
+    "gamedev",
+    "audio-manager",
     "audio",
     "sound",
+    "sound-manager",
     "music",
-    "mixer",
-    "pool"
+    "sound-effects",
+    "audio-pooling",
+    "crossfade",
+    "game-audio"
   ],
   "dependencies": {
     "com.unity.modules.audio": "1.0.0",
