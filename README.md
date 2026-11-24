@@ -173,6 +173,35 @@ Click **Apply** after changing them. Select several clips to change them togethe
 | Music restarts when changing scenes | It doesn't: `PlayMusic` with the same track keeps playing. Make sure both scenes use the same sound asset |
 | Volumes reset every launch | **Save Volumes** is off in the settings asset |
 
+## Good to know
+
+Things that commonly go wrong with audio in Unity games, and how this package handles them.
+
+- **One AudioListener per scene.** It sits on the Main Camera by default. Two listeners cause a
+  warning and wrong 3D positions; zero listeners means silence. In split-screen games keep one.
+- **3D sounds are heard from the listener.** In a third-person game the listener is on the camera,
+  a few meters behind the player. If footsteps sound too far, raise their **Min Distance** a bit.
+- **Pausing:** `Time.timeScale = 0` does **not** pause audio. Call `AudioManager.SetPaused(true)` too.
+  The package uses unscaled time, so fades and music keep working while the game is paused.
+- **Don't call `Play` every frame for a loop.** Start a loop once, keep its `SoundHandle`, and change
+  its volume/pitch. (`PlayMusic` is the exception: calling it again with the same track does nothing.)
+- **Objects that are destroyed:** `PlayAttached` stops the sound when its target is destroyed. For a
+  sound that should outlive the object (a dying enemy's scream, a picked-up coin), use `PlayAt` with
+  the object's position, or `PlaySound` with **Play On = Disable**.
+- **Your own object pools:** if you reuse objects instead of destroying them, stop their attached
+  loops when you return them to the pool (`handle.Stop()`), otherwise the sound keeps following the
+  hidden object.
+- **Scene changes:** the `[Audio Manager]` object survives scene loads, so music continues. Effects
+  attached to objects of the old scene stop because their objects are destroyed.
+- **Web builds (WebGL):** browsers block audio until the player clicks or presses a key. Start the
+  music after the first input (e.g. on the "Play" button of your main menu).
+- **Mobile:** on iOS the silent switch mutes the game by default; on Android audio pauses when the
+  app goes to the background. Both are normal platform behavior.
+- **Memory:** every clip with Load Type *Decompress On Load* sits uncompressed in memory. Long
+  clips should be *Streaming* or *Compressed In Memory* (see the import table above).
+- **AudioMixer:** if you route channels into mixer groups and also change the mixer's exposed
+  volume parameters yourself, both apply (they multiply). Use one or the other for volume.
+
 ## How it works
 
 `AudioManager` creates an invisible `[Audio Manager]` object the first time you play a sound. It
@@ -381,6 +410,34 @@ Değiştirdikten sonra **Apply**'a bas. Birden çok klibi seçip birlikte deği�
 | Bir ses bazen çalmıyor | Max Instances / Cooldown engelledi, ya da ses sınırı daha önemli bir ses için onu kesti |
 | Sahne değişince müzik baştan başlıyor | Başlamaz: aynı parçayla `PlayMusic` çalmaya devam eder. İki sahnenin de aynı ses asset'ini kullandığından emin ol |
 | Seviyeler her açılışta sıfırlanıyor | Ayar asset'inde **Save Volumes** kapalı |
+
+## Dikkat edilecekler
+
+Unity oyunlarında seste sık yaşanan sorunlar ve bu paketin onları nasıl ele aldığı.
+
+- **Sahnede tek AudioListener olmalı.** Varsayılan olarak Main Camera'dadır. İki tane olursa uyarı
+  çıkar ve 3D konumlar yanlış olur; hiç yoksa ses duyulmaz. Bölünmüş ekranlı oyunlarda bile bir tane tut.
+- **3D sesler dinleyicinin (listener) yerinden duyulur.** 3. şahıs oyunda listener kameradadır, yani
+  oyuncunun birkaç metre arkasında. Ayak sesleri fazla uzak geliyorsa **Min Distance**'ı biraz artır.
+- **Duraklatma:** `Time.timeScale = 0` sesi **durdurmaz**. Ayrıca `AudioManager.SetPaused(true)` çağır.
+  Paket ölçeklenmemiş zaman kullanır; oyun durmuşken de fade'ler ve müzik çalışır.
+- **Bir döngü sesi için her kare `Play` çağırma.** Döngüyü bir kez başlat, `SoundHandle`'ını sakla,
+  sesini/pitch'ini onunla değiştir. (`PlayMusic` istisnadır: aynı parçayla tekrar çağırmak bir şey yapmaz.)
+- **Yok edilen objeler:** `PlayAttached`, takip ettiği obje yok olunca sesi durdurur. Objeden uzun
+  yaşaması gereken sesler için (ölen düşmanın çığlığı, toplanan altın) objenin konumuyla `PlayAt` ya da
+  **Play On = Disable** ayarlı `PlaySound` kullan.
+- **Kendi obje havuzların:** objeleri yok etmek yerine tekrar kullanıyorsan, havuza geri koyarken
+  takip eden döngü seslerini durdur (`handle.Stop()`); yoksa ses gizlenmiş objeyi takip etmeye devam eder.
+- **Sahne değişimi:** `[Audio Manager]` objesi sahne değişince yok olmaz, müzik devam eder. Eski
+  sahnedeki objelere bağlı efektler, objeleri yok olduğu için durur.
+- **Web (WebGL):** tarayıcılar, oyuncu tıklayana ya da tuşa basana kadar sesi engeller. Müziği ilk
+  girdiden sonra başlat (ör. ana menüdeki "Oyna" düğmesinde).
+- **Mobil:** iOS'ta sessiz düğmesi oyunu varsayılan olarak susturur; Android'de uygulama arka plana
+  atılınca ses durur. İkisi de platformun normal davranışı.
+- **Bellek:** Load Type'ı *Decompress On Load* olan her klip bellekte sıkıştırılmamış durur. Uzun
+  klipler *Streaming* ya da *Compressed In Memory* olmalı (yukarıdaki içe aktarma tablosuna bak).
+- **AudioMixer:** kanalları mixer gruplarına yönlendirip bir de mixer'ın dışa açık (exposed) ses
+  parametrelerini kendin değiştirirsen ikisi de uygulanır (çarpılır). Ses seviyesi için birini seç.
 
 ## Nasıl çalışıyor?
 
