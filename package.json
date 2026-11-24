@@ -9,6 +9,15 @@
     "url": "https://github.com/Atthree"
   },
   "license": "MIT",
-  "keywords": [],
-  "dependencies": {}
+  "keywords": [
+    "audio",
+    "sound",
+    "music",
+    "mixer",
+    "pool"
+  ],
+  "dependencies": {
+    "com.unity.modules.audio": "1.0.0",
+    "com.unity.modules.physics": "1.0.0"
+  }
 }
